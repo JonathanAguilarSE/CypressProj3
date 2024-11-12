@@ -1,0 +1,7 @@
+{
+  "labels": [ "Trip type", "Cabin Class", "From", "To", "Depart", "Return", "Number of passengers", "Passenger 1" ],
+  "radioLabels": [ "One Way", "Round Trip" ],
+  "confirmMsgLabels": [ "DEPART", "RETURN" ],
+  "classType": [ "Premium Economy", "Business", "First" ],
+  "passengerType": [ "Adult (16-64)", "Senior (65+)", "Young Adult (12-15)", "Child (2-11)", "Infant in seat (under 2)" ]
+}
