@@ -1,86 +1,93 @@
 class BookingPage {
     /* Locators */
-    getOneWayBtn() {
-        return cy.get('.mr-1[value="One way"]')
+    getAllLabels() {
+        return cy.get('.field > label')
+    }
+
+    getTripTypeRadioButtonByLabel(label) {
+        return cy.contains('.radio', label).find('input')
+    }
+
+    getAllDropdowns() {
+        return cy.get('.select > select')
+    }
+
+    getDropdownByLabel(label) {
+        return cy.contains(label).parent().find('select')
+    }
+
+    getAllDatePickers() {
+        return cy.get('[class*="react"] > div > input')
+    }
+
+    getDatePickerByLabel(label) {
+        return cy.contains(label).parent().find('input')
+    }
+
+    getBookButton() {
+        return cy.get('button')
+    }
+
+    getTravelInfoDepart() {
+        return cy.get('.ml-3 > div > div').first().children()
+    }
+
+    getTravelInfoReturn() {
+        return cy.get('.ml-3 .ml').children()
+    }
+
+    getPassengerInfo() {
+        return cy.get('.mt-4 > p')
     }
     
-    getRoundTripBtn() {
-        return cy.get('.mr-1[value="Round trip"]')
-    }
-    
-    getRadioLabels() {
-        return cy.get('.radio')
-    }
-    
-    getFormLabels() {
-        return cy.get('.label')
-    }
-
-    getCabinClassDrpDwn() {
-        return cy.get('form > div > div:nth-child(2) select')
-    }
-
-    getFromDrpDwn() {
-        return cy.get('form > div > div:nth-child(3) select')
-    }
-
-    getToDrpDwn() {
-        return cy.get('form > div > div:nth-child(4) select')
-    }
-    
-    getDepartInput() {
-        return cy.get('form > div > div:nth-child(5) input')
-    }
-    
-    getReturnInput() {
-        return cy.get('form > div > div:nth-child(6) input')
-    }
-
-    getNumOfPassengersDrpDwn() {
-        return cy.get('form > div > div:nth-child(7) select')
-    }
-
-    getPassenger1DrpDwn() {
-        return cy.get('form > div > div:nth-child(8) select')
-    }
-
-    getPassenger2DrpDwn() {
-        return cy.get('form > div > div:nth-child(9) select')
-    }
-
-    getBookBtn() {
-        return cy.get('.Button_c_button__TmkRS')
-    }
-
-    /* Calendar Locators */
-    getDay() {
-        return cy.get('div .react-datepicker__day')
-    }
-
-    getMonth() {
-        return cy.get('div .react-datepicker__current-month')
-    }
-
-    getNextBtn() {
-        return cy.get('div .react-datepicker__navigation.react-datepicker__navigation--next')
-    }
-
-    /* Calendar Itinerary Info Locators */
-    getItineraryHeadings() {
-        return cy.get('.is-underlined')
-    }
-
-    getItineraryDestinations() {
-        return cy.get('.is-italic')
-    }
-
-    getItineraryDates() {
-        return cy.get('.field p')
-    }
-
     /* Methods */
-    clickBookBtn() {
-        this.getBookBtn().click()
+    selectTripType(type) {
+        this.getTripTypeRadioButtonByLabel(type).check()
+    }
+
+    fillDropdowns(dropdownOptions) {
+        Object.values(dropdownOptions).forEach((option, index) => {
+            this.getAllDropdowns().eq(index).select(option)
+        })
+    }
+
+    getFutureDateByDays(days) {
+        const futureDate = new Date()
+
+        futureDate.setDate(futureDate.getDate() + days)
+
+        return `${futureDate.getMonth()  + 1}/${futureDate.getDate()}/${futureDate.getFullYear()}`
+    }
+
+    getFormattedDateForBooking(dateStr) {
+        const date = new Date(dateStr)
+        const dayName = date.toLocaleString('en-US', { weekday: 'short' })
+        const monthName = date.toLocaleString('en-US', { month: 'short' })
+        const day = date.toLocaleString('en-US', { day: '2-digit' })
+
+        return `${dayName} ${monthName} ${day} ${date.getFullYear}`
+    } 
+
+    clickBookButton() {
+        this.getBookButton().click()
+    }
+
+    formatDropdownOptionsToBookingText(options) {
+        const result = [
+            `Number of Passengers: ${options.numberOfPassengers}`
+            `Passenger 1: ${options.passengerOne}`
+            `Cabin class: ${options.cabinClass}`
+        ]
+        return result
+    }
+
+    stateAbbreviations = {
+        Illinois: 'IL',
+        Florida: 'FL',
+    }
+
+    getAbbreviationsForState(state) {
+        return this.stateAbbreviations(state)
     }
 }
 
