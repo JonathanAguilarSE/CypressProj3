@@ -25,7 +25,7 @@ class BookingPage {
     }
 
     getBookButton() {
-        return cy.get('button')
+        return cy.get('[type*="submit"]')
     }
 
     getTravelInfoDepart() {
@@ -65,7 +65,7 @@ class BookingPage {
         const monthName = date.toLocaleString('en-US', { month: 'short' })
         const day = date.toLocaleString('en-US', { day: '2-digit' })
 
-        return `${dayName} ${monthName} ${day} ${date.getFullYear}`
+        return `${dayName} ${monthName} ${day} ${date.getFullYear()}`
     } 
 
     clickBookButton() {
@@ -74,20 +74,27 @@ class BookingPage {
 
     formatDropdownOptionsToBookingText(options) {
         const result = [
-            `Number of Passengers: ${options.numberOfPassengers}`
-            `Passenger 1: ${options.passengerOne}`
+            `Number of Passengers: ${options.numberOfPassengers}`,
+            `Passenger 1: ${options.passengerOne}`,
             `Cabin class: ${options.cabinClass}`
         ]
+
+        if (options.passengerTwo){
+            result.splice(2, 0, `Passenger 2: ${options.passengerTwo}`)
+        }
         return result
     }
 
     stateAbbreviations = {
         Illinois: 'IL',
         Florida: 'FL',
+        California: 'CA',
+        'New York': 'NY',
+        Texas: 'TX'
     }
 
     getAbbreviationsForState(state) {
-        return this.stateAbbreviations(state)
+        return this.stateAbbreviations[state]
     }
 }
 

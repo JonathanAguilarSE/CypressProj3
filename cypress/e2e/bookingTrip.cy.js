@@ -23,7 +23,7 @@ describe('Validating a booking platform', function() {
     })
     bookingPage.getAllDatePickers().last().should('be.disabled')
     bookingPage.getDropdownByLabel('Number of passengers').should('have.value', '1')
-    bookingPage.getDropdownByLabel('Pasenger 1').should('have.value', 'Adult (16-64)')
+    bookingPage.getDropdownByLabel('Passenger 1').should('have.value', 'Adult (16-64)')
     bookingPage.getBookButton().should('be.visible').and('be.enabled')
   })
 
@@ -40,7 +40,7 @@ describe('Validating a booking platform', function() {
       cy.wrap($el).should('be.visible')
     })
     bookingPage.getDropdownByLabel('Number of passengers').should('have.value', '1')
-    bookingPage.getDropdownByLabel('Pasenger 1').should('have.value', 'Adult (16-64)')
+    bookingPage.getDropdownByLabel('Passenger 1').should('have.value', 'Adult (16-64)')
     bookingPage.getBookButton().should('be.visible').and('be.enabled')
   })
 
@@ -51,7 +51,7 @@ describe('Validating a booking platform', function() {
       cabinClass: 'Business',
       from: 'Illinois',
       to: 'Florida',
-      numberOfpassengers: '1',
+      numberOfPassengers: '1',
       passengerOne: 'Senior (65+)'
     }
     bookingPage.fillDropdowns(dropdownOptions)
@@ -69,7 +69,7 @@ describe('Validating a booking platform', function() {
     const info = [ 'DEPART', `${departureAbbreviation} to ${destinationAbbreviation}`, futureDateBookingFormat ]
     
     bookingPage.getTravelInfoDepart().each(($el, index) => {
-      cy.wrap($el).should('have.text', info(index))
+      cy.wrap($el).should('have.text', info[index])
     })
 
     const expectedTexts = bookingPage.formatDropdownOptionsToBookingText(dropdownOptions)
@@ -79,7 +79,85 @@ describe('Validating a booking platform', function() {
     })
   })
 
-  it('Validating booking form with round trip with one passenger', () => {})
+  it('Validating booking form with round trip with one passenger', () => {
+    bookingPage.selectTripType('Round trip')
+    
+    const dropdownOptions = {
+      cabinClass: 'First',
+      from: 'California',
+      to: 'Illinois',
+      numberOfPassengers: '1',
+      passengerOne: 'Adult (16-64)'
+    }
+    bookingPage.fillDropdowns(dropdownOptions)
+
+    const departDate = bookingPage.getFutureDateByDays(7)
+    const returnDate = bookingPage.getFutureDateByDays(30)
+
+    bookingPage.getDatePickerByLabel('Depart').clear().type(`${departDate} {enter}`)
+    bookingPage.getDatePickerByLabel('Return').clear().type(`${returnDate} {enter}`)
+
+    bookingPage.clickBookButton()
+
+    const departureAbbreviation = bookingPage.getAbbreviationsForState(dropdownOptions.from)
+    const destinationAbbreviation = bookingPage.getAbbreviationsForState(dropdownOptions.to)
+
+    const departBookingFormat = bookingPage.getFormattedDateForBooking(departDate)
+    const returnBookingFormat = bookingPage.getFormattedDateForBooking(returnDate)
+
+    const departInfo = [ 'DEPART', `${departureAbbreviation} to ${destinationAbbreviation}`, departBookingFormat ]
+    bookingPage.getTravelInfoDepart().each(($el, index) => {
+      cy.wrap($el).should('have.text', departInfo[index])
+    })
+
+    const returnInfo = [ 'RETURN', `${destinationAbbreviation} to ${departureAbbreviation}`, returnBookingFormat ]
+    bookingPage.getTravelInfoReturn().each(($el, index) => {
+      cy.wrap($el).should('have.text', returnInfo[index])
+    })
+
+    const expectedTexts = bookingPage.formatDropdownOptionsToBookingText(dropdownOptions)
+
+    bookingPage.getPassengerInfo().each(($el, index) => {
+      cy.wrap($el).should('have.text', expectedTexts[index])
+    })
+  })
+
+  it('Validating boking for 2 passengers with One Way trip', () => {
+    bookingPage.selectTripType('One way')
+    
+    const dropdownOptions = {
+      cabinClass: 'First',
+      from: 'New York',
+      to: 'Texas',
+      numberOfPassengers: '2',
+      passengerOne: 'Adult (16-64)',
+      passengerTwo: 'Child (2-11)'
+    }
+
+    bookingPage.fillDropdowns(dropdownOptions)
+
+    const departDate = bookingPage.getFutureDateByDays(1)
+    bookingPage.getDatePickerByLabel('Depart').clear().type(`${departDate} {enter}`)
+
+    bookingPage.clickBookButton()
+
+    const departureAbbreviation = bookingPage.getAbbreviationsForState(dropdownOptions.from)
+    const destinationAbbreviation = bookingPage.getAbbreviationsForState(dropdownOptions.to)
+
+    const departBookingFormat = bookingPage.getFormattedDateForBooking(departDate)
+
+    const departInfo = [ 'DEPART', `${departureAbbreviation} to ${destinationAbbreviation}`, departBookingFormat ]
+    bookingPage.getTravelInfoDepart().each(($el, index) => {
+      cy.wrap($el).should('have.text', departInfo[index])
+    })
+    
+    const expectedTexts = bookingPage.formatDropdownOptionsToBookingText(dropdownOptions)
+
+    bookingPage.getPassengerInfo().each(($el, index) => {
+      cy.wrap($el).should('have.text', expectedTexts[index])
+    })
+
+  })
 
 
 })
